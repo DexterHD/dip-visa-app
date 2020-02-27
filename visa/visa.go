@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const ThreeMonthsInHours = 24 * 90
+const MaximumLimit = 24 * 90
 
 type Application struct {
 	ID        int
@@ -41,23 +41,20 @@ func CheckVisaConfirmation(applicationID int) error {
 	}
 
 	// Check if user had VISA's previously.
-	_, err = getPreviousVisas(a.Name, "data/visas.json")
+	visas, err := getPreviousVisas(a.Name, "data/visas.json")
 	if err != nil {
 		return fmt.Errorf("can't find previous visas, reason: %w", err)
 	}
 
-	var durationLimitExceeded bool
-	var durationViolated bool
-	var arrivalViolated bool
-	var departureViolated bool
+	var visasCount = len(visas)
 	var accepted = true
 
-	if a.Departure.Sub(a.Arrival).Hours() > ThreeMonthsInHours {
-		durationLimitExceeded = true
+	if a.Departure.Sub(a.Arrival).Hours() > MaximumLimit {
+		accepted = false
 	}
 
-	if durationLimitExceeded || durationViolated || arrivalViolated || departureViolated {
-		accepted = false
+	if visasCount > 3 {
+		accepted = true
 	}
 
 	report := Report{
@@ -68,12 +65,18 @@ func CheckVisaConfirmation(applicationID int) error {
 	}
 
 	// Save VISA Application report.
-	err = saveApplicationReport(report, fmt.Sprintf("reports/violations-%d.json", report.ApplicationID))
+	err = saveApplicationReport(report, "data")
 	if err != nil {
 		return fmt.Errorf("can't save application report, reason: %w", err)
 	}
 
-	err = printApplicationReport(report.ApplicationID)
+	// Save VISA Application report.
+	storedReport, err := loadApplicationReport(report.ApplicationID, "data")
+	if err != nil {
+		return fmt.Errorf("can't load application report, reason: %w", err)
+	}
+
+	err = printApplicationReport(*storedReport)
 	if err != nil {
 		return err
 	}
@@ -118,17 +121,17 @@ func getPreviousVisas(name string, filename string) ([]Visa, error) {
 		return v, nil
 	}
 
-	return nil, errors.New("Visas not found")
+	return []Visa{}, nil
 }
 
-func saveApplicationReport(vs Report, filename string) error {
+func saveApplicationReport(vs Report, dir string) error {
 
 	data, err := json.Marshal(vs)
 	if err != nil {
 		return fmt.Errorf("could not marshall violations, reason %w", err)
 	}
 
-	err = ioutil.WriteFile(filename, data, os.FileMode(0777))
+	err = ioutil.WriteFile(fmt.Sprintf("%s/violations-%d.json", dir, vs.ApplicationID), data, os.FileMode(0777))
 	if err != nil {
 		return fmt.Errorf("could not write violations, reason %w", err)
 	}
@@ -136,24 +139,23 @@ func saveApplicationReport(vs Report, filename string) error {
 	return nil
 }
 
-func printApplicationReport(reportId int) error {
+func loadApplicationReport(applicationID int, dir string) (*Report, error) {
 
-	b, err := ioutil.ReadFile(fmt.Sprintf("reports/violations-%d.json", reportId))
+	b, err := ioutil.ReadFile(fmt.Sprintf("%s/violations-%d.json", dir, applicationID))
 	if err != nil {
-		return fmt.Errorf("could not read violations, reason %w", err)
+		return nil, fmt.Errorf("could not read violations, reason %w", err)
 	}
 
-	vs := Report{}
+	vs := &Report{}
 	err = json.Unmarshal(b, &vs)
 	if err != nil {
-		return fmt.Errorf("could not unmarshall, reason %w", err)
+		return nil, fmt.Errorf("could not unmarshall, reason %w", err)
 	}
 
-	fmt.Printf(`
-ApplicationID: %d
-Applicant: %s
-Accepted: %v
+	return vs, nil
+}
 
-`, vs.ApplicationID, vs.Applicant, vs.Accepted)
+func printApplicationReport(vs Report) error {
+	fmt.Printf("\n\nID: %d\nApplicant: %s\nAccepted: %v\n\n", vs.ApplicationID, vs.Applicant, vs.Accepted)
 	return nil
 }
