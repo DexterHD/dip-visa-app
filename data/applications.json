@@ -1,9 +1,9 @@
 [
   {
-    "ID": 1,
-    "Name": "Anton",
-    "Arrival": "2020-01-01T00:00:00Z",
-    "Departure": "2020-02-01T00:00:00Z",
-    "Money": 100.5
+    "id": 1,
+    "name": "Anton",
+    "arrival": "2020-01-01T00:00:00Z",
+    "departure": "2020-02-01T00:00:00Z",
+    "money": 100.5
   }
 ]

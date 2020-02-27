@@ -6,30 +6,33 @@ import (
 	"fmt"
 	"io/ioutil"
 	"time"
+
+	"github.com/DexterHD/dip-visa-app/pkg/visa"
 )
 
-type Application struct {
-	ID        int
-	Name      string
-	Arrival   time.Time
-	Departure time.Time
-	Money     float64
+type StoredApplication struct {
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	Arrival   time.Time `json:"arrival"`
+	Departure time.Time `json:"departure"`
+	Money     float64   `json:"money"`
 }
 
-type Visa struct {
-	From      time.Time
-	To        time.Time
-	Arrival   time.Time
-	Departure time.Time
+const DefaultApplicationsDB = "data/applications.json"
+const DefaultVisasDB = "data/visas.json"
+
+type FileApplicationsStorage struct {
+	Database string
 }
 
-var ApplicationsDB = "data/applications.json"
-var VisasDB = "data/visas.json"
+func NewFileApplicationsStorage() *FileApplicationsStorage {
+	return &FileApplicationsStorage{Database: DefaultApplicationsDB}
+}
 
-func GetVisaApplication(id int) (*Application, error) {
+func (as *FileApplicationsStorage) GetVisaApplication(id int) (*visa.Application, error) {
 
-	var apps []Application
-	b, err := ioutil.ReadFile(ApplicationsDB)
+	var apps []StoredApplication
+	b, err := ioutil.ReadFile(as.Database)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read applications database %w", err)
 	}
@@ -40,17 +43,38 @@ func GetVisaApplication(id int) (*Application, error) {
 
 	for _, v := range apps {
 		if v.ID == id {
-			return &v, nil
+			return &visa.Application{
+				ID:        v.ID,
+				Name:      v.Name,
+				Arrival:   v.Arrival,
+				Departure: v.Departure,
+				Money:     v.Money,
+			}, nil
 		}
 	}
 
 	return nil, errors.New("application was not found")
 }
 
-func GetPreviousVisas(name string) ([]Visa, error) {
+type StoredVisa struct {
+	From      time.Time `json:"from"`
+	To        time.Time `json:"to"`
+	Arrival   time.Time `json:"arrival"`
+	Departure time.Time `json:"departure"`
+}
 
-	var visas map[string][]Visa
-	b, err := ioutil.ReadFile(VisasDB)
+type FileVisasStorage struct {
+	Database string
+}
+
+func NewFileVisasStorage() *FileVisasStorage {
+	return &FileVisasStorage{Database: DefaultVisasDB}
+}
+
+func (vs *FileVisasStorage) GetPreviousVisas(name string) ([]visa.Visa, error) {
+
+	var visas map[string][]StoredVisa
+	b, err := ioutil.ReadFile(vs.Database)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read visas database %w", err)
 	}
@@ -59,9 +83,18 @@ func GetPreviousVisas(name string) ([]Visa, error) {
 		return nil, fmt.Errorf("couldn't unmarshal visas database %w", err)
 	}
 
+	var ret = make([]visa.Visa, len(visas))
+
 	if v, ok := visas[name]; ok {
-		return v, nil
+		for _, current := range v {
+			ret = append(ret, visa.Visa{
+				From:      current.From,
+				To:        current.To,
+				Arrival:   current.Departure,
+				Departure: current.Arrival,
+			})
+		}
 	}
 
-	return []Visa{}, nil
+	return ret, nil
 }
