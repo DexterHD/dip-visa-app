@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/DexterHD/dip-visa-app/visa"
+	"github.com/DexterHD/dip-visa-app/pkg/visa"
 )
 
 func main() {
@@ -12,7 +12,7 @@ func main() {
 	flag.IntVar(&id, "id", 0, "Specify application id you want to check")
 	flag.Parse()
 
-	err := visa.CheckVisaConfirmation(id)
+	err := visa.CheckConfirmation(id)
 	if err != nil {
 		log.Fatalln(err)
 	}
