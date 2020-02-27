@@ -35,7 +35,11 @@ func PrintApplicationReport(reportId int) error {
 		return fmt.Errorf("could not unmarshall, reason %w", err)
 	}
 
-	fmt.Printf("%v\n", vs)
-	// os.Remove(fmt.Sprintf("data/violations-%d.json", reportId))
+	fmt.Printf(`
+ApplicationID: %d
+Applicant: %s
+Accepted: %v
+
+`, vs.ViolationID, vs.Applicant, vs.Accepted)
 	return nil
 }

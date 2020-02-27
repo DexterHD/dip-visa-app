@@ -16,13 +16,13 @@ func main() {
 
 func CheckVisaConfirmation(applicationID int) int {
 	// Gather application data.
-	a, err := GetVisaApplication(applicationID, "data/applications.json")
+	a, err := GetVisaApplication(applicationID)
 	if err != nil {
 		log.Fatalf("Can't get application, reason: %v", err)
 	}
 
 	// Check if user had VISA's previously.
-	v, err := GetPreviousVisas(a.Name, "data/visas.json")
+	v, err := GetPreviousVisas(a.Name)
 	if err != nil {
 		log.Fatalf("Can't find previous visas, reason: %v", err)
 	}

@@ -15,6 +15,8 @@ type Violations struct {
 	DepartureViolated bool
 	ArrivalViolated   bool
 	DurationViolated  bool
+
+	Accepted bool
 }
 
 func CheckVisasViolations(a *Application, v []Visa) (Violations, error) {
@@ -26,10 +28,15 @@ func CheckVisasViolations(a *Application, v []Visa) (Violations, error) {
 		DepartureViolated: false,
 		ArrivalViolated:   false,
 		DurationViolated:  false,
+		Accepted:          true,
 	}
 
 	if a.Departure.Sub(a.Arrival).Hours() > ThreeMonthsInHours {
 		vs.DurationViolated = true
+	}
+
+	if vs.DurationViolated || vs.ArrivalViolated || vs.DepartureViolated {
+		vs.Accepted = false
 	}
 
 	return vs, nil

@@ -16,10 +16,10 @@ type Application struct {
 	Money     float64
 }
 
-func GetVisaApplication(id int, filename string) (*Application, error) {
+func GetVisaApplication(id int) (*Application, error) {
 
 	var apps []Application
-	b, err := ioutil.ReadFile(filename)
+	b, err := ioutil.ReadFile("data/applications.json")
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read applications database %w", err)
 	}
