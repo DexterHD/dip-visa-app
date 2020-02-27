@@ -1,4 +1,4 @@
-package main
+package visa
 
 import (
 	"encoding/json"
@@ -16,10 +16,10 @@ type Application struct {
 	Money     float64
 }
 
-func GetVisaApplication(id int) (*Application, error) {
+func GetVisaApplication(id int, filename string) (*Application, error) {
 
 	var apps []Application
-	b, err := ioutil.ReadFile("data/applications.json")
+	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read applications database %w", err)
 	}

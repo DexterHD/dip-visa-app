@@ -1,4 +1,4 @@
-package main
+package visa
 
 import (
 	"encoding/json"
@@ -15,10 +15,10 @@ type Visa struct {
 	Departure time.Time
 }
 
-func GetPreviousVisas(name string) ([]Visa, error) {
+func GetPreviousVisas(name string, filename string) ([]Visa, error) {
 
 	var visas map[string][]Visa
-	b, err := ioutil.ReadFile("data/visas.json")
+	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read visas database %w", err)
 	}
