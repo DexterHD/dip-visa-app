@@ -1,7 +1,7 @@
 # Dependency Inversion Principle Example Application
 
 ![golangci-lint](https://github.com/idexter/dip-visa-app/workflows/golangci-lint/badge.svg)
-![build&tests](https://github.com/idexter/dip-visa-app/workflows/golang-build/badge.svg)
+![build&tests](https://github.com/idexter/dip-visa-app/workflows/build/badge.svg)
 [![codecov](https://codecov.io/gh/idexter/dip-visa-app/branch/master/graph/badge.svg)](https://codecov.io/gh/idexter/dip-visa-app)
 
 This application provides examples of DIP and how it helps to make software design better.
