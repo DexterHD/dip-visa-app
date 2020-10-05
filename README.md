@@ -12,9 +12,9 @@ This application provides examples of DIP and how it helps to make application d
 There are 3 branches with a bit different source code but which implements the same application.
 
 Those branches are:
-- classic-approach
-- layers-separation
-- dip-principle (master)
+- [classic-approach](https://github.com/idexter/dip-visa-app/tree/classic-approach)
+- [layers-separation](https://github.com/idexter/dip-visa-app/tree/layers-separation)
+- [dip-principle (master)](https://github.com/idexter/dip-visa-app/tree/master)
 
 Every implementation implements business-logic within `CheckConfirmation(applicationID int)` function/method.
 Don't focus on business-logic of this method. It's simple and made up from imagination. 
