@@ -1,3 +1,7 @@
+// Package visa implements our whole Visa application service.
+// It consist several functions which is responsible for different
+// parts of our application.
+// There is no DI and this version don't use DIP principle.
 package visa
 
 import (
@@ -9,30 +13,12 @@ import (
 	"time"
 )
 
-const MaximumLimit = 24 * 90
+const maxTimeToStay = 24 * 90
 
-type Application struct {
-	ID        int
-	Name      string
-	Arrival   time.Time
-	Departure time.Time
-	Money     float64
-}
-
-type Report struct {
-	ID            int64
-	ApplicationID int
-	Applicant     string
-	Accepted      bool
-}
-
-type Visa struct {
-	From      time.Time
-	To        time.Time
-	Arrival   time.Time
-	Departure time.Time
-}
-
+// CheckVisaConfirmation checks VISA application and prints results.
+// It runs whole application business logic.
+// As you can see in this implementation, high-level logic depends on
+// low level functions which are using files to store data.
 func CheckVisaConfirmation(applicationID int) error {
 	// Gather application data.
 	a, err := getVisaApplication(applicationID, "data/applications.json")
@@ -49,7 +35,7 @@ func CheckVisaConfirmation(applicationID int) error {
 	var visasCount = len(visas)
 	var accepted = true
 
-	if a.Departure.Sub(a.Arrival).Hours() > MaximumLimit {
+	if a.Departure.Sub(a.Arrival).Hours() > maxTimeToStay {
 		accepted = false
 	}
 
@@ -84,6 +70,7 @@ func CheckVisaConfirmation(applicationID int) error {
 	return nil
 }
 
+// getVisaApplication gets visa application from file using ID.
 func getVisaApplication(id int, filename string) (*Application, error) {
 
 	var apps []Application
@@ -105,6 +92,7 @@ func getVisaApplication(id int, filename string) (*Application, error) {
 	return nil, errors.New("application was not found")
 }
 
+// getPreviousVisas gets previous VISAs from file using applicant name.
 func getPreviousVisas(name string, filename string) ([]Visa, error) {
 
 	var visas map[string][]Visa
@@ -124,6 +112,7 @@ func getPreviousVisas(name string, filename string) ([]Visa, error) {
 	return []Visa{}, nil
 }
 
+// saveApplicationReport saves visa application report to provided directory.
 func saveApplicationReport(vs Report, dir string) error {
 
 	data, err := json.Marshal(vs)
@@ -139,6 +128,7 @@ func saveApplicationReport(vs Report, dir string) error {
 	return nil
 }
 
+// loadApplicationReport loads application report by id from directory.
 func loadApplicationReport(applicationID int, dir string) (*Report, error) {
 
 	b, err := ioutil.ReadFile(fmt.Sprintf("%s/violations-%d.json", dir, applicationID))
@@ -155,6 +145,7 @@ func loadApplicationReport(applicationID int, dir string) (*Report, error) {
 	return vs, nil
 }
 
+// printApplicationReport prints visa application report.
 func printApplicationReport(vs Report) error {
 	fmt.Printf("\n\nID: %d\nApplicant: %s\nAccepted: %v\n\n", vs.ApplicationID, vs.Applicant, vs.Accepted)
 	return nil
