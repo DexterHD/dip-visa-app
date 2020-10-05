@@ -16,7 +16,7 @@ Those branches are:
 - [layers-separation](https://github.com/idexter/dip-visa-app/tree/layers-separation)
 - [dip-principle (master)](https://github.com/idexter/dip-visa-app/tree/master)
 
-Every implementation implements business-logic within `CheckConfirmation(applicationID int)` function/method.
+Every version has business-logic within `CheckConfirmation(applicationID int)` function/method.
 Don't focus on business-logic of this method. It's simple and made up from imagination. 
 It should not prevent you from understanding code structure, but if you are interested, I described an idea
 of application in the "Business Logic" section below.
