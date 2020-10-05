@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// Application describes VISA application
 type Application struct {
 	ID        int
 	Name      string
@@ -16,6 +17,7 @@ type Application struct {
 	Money     float64
 }
 
+// Visa describes VISA
 type Visa struct {
 	From      time.Time
 	To        time.Time
@@ -23,13 +25,13 @@ type Visa struct {
 	Departure time.Time
 }
 
-var ApplicationsDB = "data/applications.json"
-var VisasDB = "data/visas.json"
+var applicationsDB = "data/applications.json"
+var visasDB = "data/visas.json"
 
+// GetVisaApplication gets visa application from storage by ID.
 func GetVisaApplication(id int) (*Application, error) {
-
 	var apps []Application
-	b, err := ioutil.ReadFile(ApplicationsDB)
+	b, err := ioutil.ReadFile(applicationsDB)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read applications database %w", err)
 	}
@@ -47,10 +49,10 @@ func GetVisaApplication(id int) (*Application, error) {
 	return nil, errors.New("application was not found")
 }
 
+// GetPreviousVisas gets previous VISAs from database by applicant name.
 func GetPreviousVisas(name string) ([]Visa, error) {
-
 	var visas map[string][]Visa
-	b, err := ioutil.ReadFile(VisasDB)
+	b, err := ioutil.ReadFile(visasDB)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read visas database %w", err)
 	}

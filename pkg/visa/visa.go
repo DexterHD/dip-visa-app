@@ -1,3 +1,10 @@
+// Package visa implements our application business logic.
+// As you can see here, layers are separated in different packages like:
+// - visa
+// - report
+// - storage
+// But at the same time current business-logic package is depends on low-level
+// packages like "report" and "storage".
 package visa
 
 import (
@@ -8,8 +15,11 @@ import (
 	"github.com/DexterHD/dip-visa-app/pkg/storage"
 )
 
-const MaximumLimit = 24 * 90
+const maxTimeToStay = 24 * 90
 
+// CheckConfirmation implements VISA confirmation business logic.
+// Don't focus on business-logic itself, but see how we call low-level functions
+// using packages.
 func CheckConfirmation(applicationID int) error {
 	// Gather application data.
 	a, err := storage.GetVisaApplication(applicationID)
@@ -26,7 +36,7 @@ func CheckConfirmation(applicationID int) error {
 	var visasCount = len(visas)
 	var accepted = true
 
-	if a.Departure.Sub(a.Arrival).Hours() > MaximumLimit {
+	if a.Departure.Sub(a.Arrival).Hours() > maxTimeToStay {
 		accepted = false
 	}
 
