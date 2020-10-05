@@ -8,3 +8,12 @@ lint:
 
 test:
 	go test -v -cover ./...
+
+make ci-coverage-dependencies:
+	go get github.com/axw/gocov/...
+	go get github.com/AlekSi/gocov-xml
+
+make ci-coverage-report: ci-coverage-dependencies
+	go test -race -covermode=atomic -coverprofile=coverage.txt . && \
+	gocov convert coverage.txt | gocov-xml > coverage.xml && \
+    bash <(curl -s https://codecov.io/bash) -f coverage.xml

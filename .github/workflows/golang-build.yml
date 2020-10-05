@@ -25,6 +25,6 @@ jobs:
       - name: Run build
         run: make build
 
-      # Run testing on the code
-      - name: Run testing
-        run: make test
+      # Run testing with coverage on the code
+      - name: Run tests (with coverage)
+        run: make ci-coverage-report
