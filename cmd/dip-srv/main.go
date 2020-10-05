@@ -41,9 +41,10 @@ func main() {
 		}
 
 		// Run Visa confirmation business logic
-		err = svc.CheckConfirmation(id)
+		if err = svc.CheckConfirmation(id); err != nil {
+			HttpResponse(w, err)
+		}
 		HttpResponse(w, "OK")
-		return
 	})
 
 	log.Println("Listening on :8080")
@@ -55,7 +56,10 @@ func HttpResponse(w http.ResponseWriter, msg interface{}) {
 		w.WriteHeader(500)
 	}
 	b, err := json.Marshal(msg)
-	if err == nil {
-		w.Write(b)
+	if err != nil {
+		log.Printf("can't unmarshal message, reason: %v", err)
+	}
+	if _, err := w.Write(b); err != nil {
+		log.Printf("can't write response, reason: %v", err)
 	}
 }
