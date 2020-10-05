@@ -10,8 +10,9 @@ import (
 	"github.com/DexterHD/dip-visa-app/pkg/visa"
 )
 
-const DefaultDir = "data"
+const defaultDir = "data"
 
+// StoredReport describes visa application report stored in database.
 type StoredReport struct {
 	ID            int64     `json:"id"`
 	ApplicationID int       `json:"application_id"`
@@ -20,14 +21,17 @@ type StoredReport struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 }
 
+// FileStorage implement FileStorage for Visa Application reports.
 type FileStorage struct {
 	Dir string
 }
 
+// NewFileStorage creates new FileStorage instance.
 func NewFileStorage() *FileStorage {
-	return &FileStorage{Dir: DefaultDir}
+	return &FileStorage{Dir: defaultDir}
 }
 
+// SaveApplicationReport saves Application report in to database.
 func (rs *FileStorage) SaveApplicationReport(vs visa.Report) error {
 	data, err := json.Marshal(StoredReport{
 		ID:            vs.ID,
@@ -48,6 +52,7 @@ func (rs *FileStorage) SaveApplicationReport(vs visa.Report) error {
 	return nil
 }
 
+// LoadApplicationReport loads Visa Application Report from database by applicationID.
 func (rs *FileStorage) LoadApplicationReport(applicationID int) (*visa.Report, error) {
 
 	b, err := ioutil.ReadFile(fmt.Sprintf("%s/violations-%d.json", rs.Dir, applicationID))
@@ -69,6 +74,7 @@ func (rs *FileStorage) LoadApplicationReport(applicationID int) (*visa.Report, e
 	}, nil
 }
 
+// PrintApplicationReport prints information about visa report.
 func PrintApplicationReport(vs visa.Report) error {
 	fmt.Printf("\n\nID: %d\nApplicant: %s\nAccepted: %v\n\n", vs.ApplicationID, vs.Applicant, vs.Accepted)
 	return nil

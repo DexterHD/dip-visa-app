@@ -10,6 +10,7 @@ import (
 	"github.com/DexterHD/dip-visa-app/pkg/visa"
 )
 
+// StoredApplication describes Visa Application stored in Database.
 type StoredApplication struct {
 	ID        int       `json:"id"`
 	Name      string    `json:"name"`
@@ -18,17 +19,20 @@ type StoredApplication struct {
 	Money     float64   `json:"money"`
 }
 
-const DefaultApplicationsDB = "data/applications.json"
-const DefaultVisasDB = "data/visas.json"
+const defaultApplicationsDB = "data/applications.json"
+const defaultVisasDB = "data/visas.json"
 
+// FileApplicationsStorage implements file Visa Applications storage.
 type FileApplicationsStorage struct {
 	Database string
 }
 
+// NewFileApplicationsStorage creates new FileApplicationsStorage.
 func NewFileApplicationsStorage() *FileApplicationsStorage {
-	return &FileApplicationsStorage{Database: DefaultApplicationsDB}
+	return &FileApplicationsStorage{Database: defaultApplicationsDB}
 }
 
+// GetVisaApplication gets visa application by application id.
 func (as *FileApplicationsStorage) GetVisaApplication(id int) (*visa.Application, error) {
 
 	var apps []StoredApplication
@@ -56,6 +60,7 @@ func (as *FileApplicationsStorage) GetVisaApplication(id int) (*visa.Application
 	return nil, errors.New("application was not found")
 }
 
+// StoredVisa describes Visa stored in database.
 type StoredVisa struct {
 	From      time.Time `json:"from"`
 	To        time.Time `json:"to"`
@@ -63,15 +68,18 @@ type StoredVisa struct {
 	Departure time.Time `json:"departure"`
 }
 
+// FileVisasStorage implements Visas database based on files.
 type FileVisasStorage struct {
 	Database string
 }
 
+// NewFileVisasStorage creates new instance for FileVisasStorage.
 func NewFileVisasStorage() *FileVisasStorage {
-	return &FileVisasStorage{Database: DefaultVisasDB}
+	return &FileVisasStorage{Database: defaultVisasDB}
 }
 
-func (vs *FileVisasStorage) GetPreviousVisas(name string) ([]visa.Visa, error) {
+// GetPreviousVisas gets previous Visas for provided applicant.
+func (vs *FileVisasStorage) GetPreviousVisas(applicantName string) ([]visa.Visa, error) {
 
 	var visas map[string][]StoredVisa
 	b, err := ioutil.ReadFile(vs.Database)
@@ -85,7 +93,7 @@ func (vs *FileVisasStorage) GetPreviousVisas(name string) ([]visa.Visa, error) {
 
 	var ret = make([]visa.Visa, len(visas))
 
-	if v, ok := visas[name]; ok {
+	if v, ok := visas[applicantName]; ok {
 		for _, current := range v {
 			ret = append(ret, visa.Visa{
 				From:      current.From,

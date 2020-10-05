@@ -30,28 +30,28 @@ func main() {
 		idParam := r.FormValue("id")
 		id, err := strconv.Atoi(idParam)
 		if err != nil {
-			HttpResponse(w, err)
+			httpResponse(w, err)
 			return
 		}
 
 		// Replace printer to print report to HTTP
 		svc.PrintReport = func(r visa.Report) error {
-			HttpResponse(w, r)
+			httpResponse(w, r)
 			return nil
 		}
 
 		// Run Visa confirmation business logic
 		if err = svc.CheckConfirmation(id); err != nil {
-			HttpResponse(w, err)
+			httpResponse(w, err)
 		}
-		HttpResponse(w, "OK")
+		httpResponse(w, "OK")
 	})
 
 	log.Println("Listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func HttpResponse(w http.ResponseWriter, msg interface{}) {
+func httpResponse(w http.ResponseWriter, msg interface{}) {
 	if _, ok := msg.(error); ok {
 		w.WriteHeader(500)
 	}
