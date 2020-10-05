@@ -4,9 +4,9 @@ import (
 	"flag"
 	"log"
 
-	"github.com/DexterHD/dip-visa-app/pkg/report"
-	"github.com/DexterHD/dip-visa-app/pkg/storage"
-	"github.com/DexterHD/dip-visa-app/pkg/visa"
+	"github.com/idexter/dip-visa-app/pkg/report"
+	"github.com/idexter/dip-visa-app/pkg/storage"
+	"github.com/idexter/dip-visa-app/pkg/visa"
 )
 
 func main() {

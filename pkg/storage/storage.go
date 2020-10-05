@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/DexterHD/dip-visa-app/pkg/visa"
+	"github.com/idexter/dip-visa-app/pkg/visa"
 )
 
 // StoredApplication describes Visa Application stored in Database.

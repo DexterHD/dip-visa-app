@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/DexterHD/dip-visa-app/pkg/visa"
+	"github.com/idexter/dip-visa-app/pkg/visa"
 )
 
 const defaultDir = "data"

@@ -1,4 +1,4 @@
-module github.com/DexterHD/dip-visa-app
+module github.com/idexter/dip-visa-app
 
 go 1.15
 
