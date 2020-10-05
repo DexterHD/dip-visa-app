@@ -14,5 +14,5 @@ make ci-coverage-dependencies:
 	go get github.com/AlekSi/gocov-xml
 
 make ci-coverage-report: ci-coverage-dependencies
-	go test -race -covermode=atomic -coverprofile=coverage.txt . && \
+	go test -race -covermode=atomic -coverprofile=coverage.txt ./... && \
 	gocov convert coverage.txt | gocov-xml > coverage.xml
