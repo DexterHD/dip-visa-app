@@ -7,7 +7,7 @@ lint:
 	golangci-lint run
 
 test:
-	go test -v -cover ./...
+	go test -v -race -cover ./...
 
 ci-coverage-dependencies:
 	go get github.com/axw/gocov/...
@@ -19,7 +19,7 @@ ci-coverage-report: ci-coverage-dependencies
 	gocov convert coverage.txt | gocov-xml > coverage.xml
 
 clean:
-	rm ./coverage.txt
-	rm ./coverage.xml
-	rm ./dip-srv
-	rm ./dip-cli
+	rm -f ./coverage.txt
+	rm -f ./coverage.xml
+	rm -f ./dip-srv
+	rm -f ./dip-cli
